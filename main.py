@@ -32,7 +32,7 @@ ninjago_cards = [
 
 @bot.event
 async def on_ready():
-    print(f'✅ {bot.user} is online and ready for Ninjago Battle!')
+    print(f'✅ {bot.user} is online!')
 
 @bot.command()
 async def character(ctx):
@@ -49,28 +49,30 @@ async def character(ctx):
         await ctx.send(embed=embed)
         
         def check(m):
+            # البوت هنا يسمع فقط الإجابة الصحيحة وفي نفس القناة
             return m.channel == ctx.channel and m.content.lower() == card['name'].lower() and not m.author.bot
         
         try:
-            # Game logic: 10 seconds timeout for speed
+            # ينتظر 10 ثواني للإجابة الصحيحة
             msg = await bot.wait_for('message', check=check, timeout=10.0)
             
             user_id = msg.author.id
             game_scores[user_id] = game_scores.get(user_id, 0) + 1
             
-            # Message when someone guesses right
-            await ctx.send(f"✅ {msg.author.mention}, you have guessed the character! You have now **{game_scores[user_id]}** points.")
+            # يرسل رسالة فقط في حال كانت الإجابة صحيحة
+            await ctx.send(f"✅ **{msg.author.display_name}**, you have guessed the character! You have now **{game_scores[user_id]}** points.")
             
             if game_scores[user_id] >= winning_score:
                 await ctx.send(f"🏆 **{msg.author.mention} YOU HAVE WON THE GAME!** 🏆")
                 game_on = False
             else:
-                await asyncio.sleep(2) # Short break before next card
+                await asyncio.sleep(2) 
                 
         except asyncio.TimeoutError:
-            await ctx.send(f"⌛ **Time's up!** It was **{card['name']}**. Next one is coming...")
+            # إذا لم يكتب أحد الإجابة الصحيحة خلال الوقت المحدد
+            await ctx.send(f"⌛ **Time's up!** It was **{card['name']}**.")
             await asyncio.sleep(2)
 
-# Railway Environment Variable
 TOKEN = os.getenv('DISCORD_TOKEN')
 bot.run(TOKEN)
+ 
