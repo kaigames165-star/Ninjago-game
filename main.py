@@ -2,11 +2,12 @@ import discord
 from discord.ext import commands
 import random
 import os
+import asyncio
 
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# قائمة الـ 18 شخصية التي أرسلتها (مرتبة وجاهزة)
+# Character List
 ninjago_cards = [
     {"name": "lloyd", "image": "https://i.imgur.com/DVGrlrB.jpeg"},
     {"name": "kai", "image": "https://i.imgur.com/eYmxbCQ.jpeg"},
@@ -18,10 +19,10 @@ ninjago_cards = [
     {"name": "sora", "image": "https://i.imgur.com/x7IUMHB.jpeg"},
     {"name": "frak", "image": "https://i.imgur.com/PPPowUh.jpeg"},
     {"name": "gandalaria", "image": "https://i.imgur.com/RtgGl1x.jpeg"},
-    {"name": "Jordana", "image": "https://i.imgur.com/oKjTFj7.jpeg"},
-    {"name": "Riyu", "image": "https://i.imgur.com/WPB2r5w.jpeg"},
+    {"name": "jordana", "image": "https://i.imgur.com/oKjTFj7.jpeg"},
+    {"name": "riyu", "image": "https://i.imgur.com/WPB2r5w.jpeg"},
     {"name": "source dragon of motion", "image": "https://i.imgur.com/bwXnejz.jpeg"},
-    {"name": "Arc dragon of balance", "image": "https://i.imgur.com/IIyc6ey.jpeg"},
+    {"name": "arc dragon of balance", "image": "https://i.imgur.com/IIyc6ey.jpeg"},
     {"name": "rontu", "image": "https://i.imgur.com/6NSKZKt.jpeg"},
     {"name": "egalt", "image": "https://i.imgur.com/GoxIIdt.jpeg"},
     {"name": "zarkar", "image": "https://i.imgur.com/32z498a.jpeg"},
@@ -30,25 +31,26 @@ ninjago_cards = [
 
 @bot.event
 async def on_ready():
-    print(f'✅ البوت يعمل الآن باسم: {bot.user}')
+    print(f'Logged in as {bot.user}')
 
 @bot.command()
-async def spawn(ctx):
+async def character(ctx):
     card = random.choice(ninjago_cards)
-    embed = discord.Embed(
-        title="⚡ بطاقة نينجاغو جديدة ظهرت!",
-        description="اكتب اسم الشخصية للإمساك بها!",
-        color=discord.Color.blue()
-    )
+    embed = discord.Embed(title="⚔️ Who is this character?", color=discord.Color.gold())
     embed.set_image(url=card['image'])
     await ctx.send(embed=embed)
-    
-    # رسالة مساعدة لك كمبرمج (سيتم مسحها لاحقاً)
-    print(f"تم إظهار بطاقة: {card['name']}")
 
-# جلب التوكن من النظام (مهم جداً للاستضافة)
+    def check(m):
+        return m.content.lower() == card['name'].lower() and m.channel == ctx.channel
+
+    try:
+        msg = await bot.wait_for('message', check=check, timeout=20.0)
+        await ctx.send(f"✅ {msg.author.mention} correct! It's **{card['name']}**")
+    except asyncio.TimeoutError:
+        await ctx.send(f"⌛ Time's up! The answer was **{card['name']}**")
+
 TOKEN = os.getenv('DISCORD_TOKEN')
 if TOKEN:
     bot.run(TOKEN)
 else:
-    print("خطأ: لم يتم العثور على التوكن في إعدادات الاستضافة!")
+    print("Error: DISCORD_TOKEN not found in environment variables")
