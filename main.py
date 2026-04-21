@@ -23,7 +23,7 @@ ninjago_cards = [
     {"name": "jordana", "image": "https://i.imgur.com/oKjTFj7.jpeg"},
     {"name": "riyu", "image": "https://i.imgur.com/WPB2r5w.jpeg"},
     {"name": "source dragon of motion", "image": "https://i.imgur.com/bwXnejz.jpeg"},
-    {"name": "arc dragon of balance", "image": "https://i.imgur.com/IIyc6ey.jpeg"},
+    {"name": "arc dragon of focus", "image": "https://i.imgur.com/IIyc6ey.jpeg"},
     {"name": "rontu", "image": "https://i.imgur.com/6NSKZKt.jpeg"},
     {"name": "egalt", "image": "https://i.imgur.com/GoxIIdt.jpeg"},
     {"name": "zarkar", "image": "https://i.imgur.com/32z498a.jpeg"},
